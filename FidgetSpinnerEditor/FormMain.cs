@@ -42,10 +42,10 @@ namespace FidgetSpinnerEditor
             e.Graphics.FillEllipse(Brushes.White, _innerDrawingArea);
             e.Graphics.DrawEllipse(Pens.Black, _innerDrawingArea);
 
+            var yspacing = (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1);
             for (var i = 0; i < LedRows; i++)
             {
-                var p = new PointF(_center.X,
-                    (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1) * (1 + i));
+                var p = new PointF(_center.X,_drawingArea.Top + (yspacing * (1 + i)));
 
                 for (var j = 0; j < LedColumns; j++)
                 {
@@ -182,10 +182,11 @@ namespace FidgetSpinnerEditor
         private int GetBitByPosition(Point point)
         {
             if (!_drawingArea.IsEmpty && !_innerDrawingArea.IsEmpty && !_center.IsEmpty)
+            {
+                var yspacing = (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1);
                 for (var i = 0; i < LedRows; i++)
                 {
-                    var p = new PointF(_center.X,
-                        (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1) * (1 + i));
+                    var p = new PointF(_center.X, _drawingArea.Top + (yspacing * (1 + i)));
 
                     for (var j = 0; j < LedColumns; j++)
                     {
@@ -194,6 +195,7 @@ namespace FidgetSpinnerEditor
                         p = RotatePoint(p, _center, 360 / LedColumns);
                     }
                 }
+            }
 
             return -1;
         }

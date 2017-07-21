@@ -40,6 +40,10 @@
             this.aboutProgramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialogBin = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialogBin = new System.Windows.Forms.OpenFileDialog();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rotateClockwiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clockwiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.counterclockwiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
             this.SuspendLayout();
@@ -62,6 +66,7 @@
             // 
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
@@ -129,6 +134,39 @@
             // 
             this.openFileDialogBin.Filter = "Bin file (*.bin)|*.bin";
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rotateClockwiseToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "&View";
+            // 
+            // rotateClockwiseToolStripMenuItem
+            // 
+            this.rotateClockwiseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.counterclockwiseToolStripMenuItem,
+            this.clockwiseToolStripMenuItem});
+            this.rotateClockwiseToolStripMenuItem.Name = "rotateClockwiseToolStripMenuItem";
+            this.rotateClockwiseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rotateClockwiseToolStripMenuItem.Text = "Rotate";
+            // 
+            // clockwiseToolStripMenuItem
+            // 
+            this.clockwiseToolStripMenuItem.Name = "clockwiseToolStripMenuItem";
+            this.clockwiseToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.clockwiseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.clockwiseToolStripMenuItem.Text = "Clockwise";
+            this.clockwiseToolStripMenuItem.Click += new System.EventHandler(this.clockwiseToolStripMenuItem_Click);
+            // 
+            // counterclockwiseToolStripMenuItem
+            // 
+            this.counterclockwiseToolStripMenuItem.Name = "counterclockwiseToolStripMenuItem";
+            this.counterclockwiseToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.counterclockwiseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.counterclockwiseToolStripMenuItem.Text = "Counter-clockwise";
+            this.counterclockwiseToolStripMenuItem.Click += new System.EventHandler(this.counterclockwiseToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -163,6 +201,10 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogBin;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutProgramToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotateClockwiseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem counterclockwiseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clockwiseToolStripMenuItem;
     }
 }
 

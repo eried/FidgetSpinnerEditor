@@ -16,7 +16,8 @@ namespace FidgetSpinnerEditor
         private PointF _center;
         private Rectangle _drawingArea;
         private RectangleF _innerDrawingArea;
-        private int _ledSize;
+        private int _ledSize, _rotation = 0;
+        private double LedAngleBetweenColumns = 360 / LedColumns;
 
         public FormMain()
         {
@@ -46,12 +47,15 @@ namespace FidgetSpinnerEditor
             for (var i = 0; i < LedRows; i++)
             {
                 var p = new PointF(_center.X,_drawingArea.Top + (yspacing * (1 + i)));
+                var r = _rotation;
 
                 for (var j = 0; j < LedColumns; j++)
                 {
+                    p = RotatePoint(p, _center, r+ LedAngleBetweenColumns);
+                    r = 0;
+
                     e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? Brushes.Blue : Brushes.LightYellow,
                         p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize);
-                    p = RotatePoint(p, _center, 360 / LedColumns);
                 }
             }
         }
@@ -179,6 +183,18 @@ namespace FidgetSpinnerEditor
             return output.ToArray();
         }
 
+        private void counterclockwiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _rotation -= 5;
+            pictureBoxEditor.Invalidate();
+        }
+
+        private void clockwiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _rotation += 5;
+            pictureBoxEditor.Invalidate();
+        }
+
         private int GetBitByPosition(Point point)
         {
             if (!_drawingArea.IsEmpty && !_innerDrawingArea.IsEmpty && !_center.IsEmpty)
@@ -187,12 +203,15 @@ namespace FidgetSpinnerEditor
                 for (var i = 0; i < LedRows; i++)
                 {
                     var p = new PointF(_center.X, _drawingArea.Top + (yspacing * (1 + i)));
+                    var r = _rotation;
 
                     for (var j = 0; j < LedColumns; j++)
                     {
+                        p = RotatePoint(p, _center, r + LedAngleBetweenColumns);
+                        r = 0;
+
                         if (new RectangleF(p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize).Contains(point))
                             return i + j * LedRows;
-                        p = RotatePoint(p, _center, 360 / LedColumns);
                     }
                 }
             }

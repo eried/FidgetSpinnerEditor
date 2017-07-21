@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FidgetSpinnerEditor
@@ -16,11 +12,11 @@ namespace FidgetSpinnerEditor
     public partial class FormMain : Form
     {
         private const int LedRows = 16, LedColumns = 120;
-        private int LedSize;
         private BitArray _bits = new BitArray(LedRows * LedColumns);
-        private Rectangle drawingArea;
-        private PointF center;
-        private RectangleF innerDrawingArea;
+        private PointF _center;
+        private Rectangle _drawingArea;
+        private RectangleF _innerDrawingArea;
+        private int _ledSize;
 
         public FormMain()
         {
@@ -29,37 +25,40 @@ namespace FidgetSpinnerEditor
 
         private void pictureBoxEditor_Paint(object sender, PaintEventArgs e)
         {
-            var m = Math.Min(pictureBoxEditor.DisplayRectangle.Height, pictureBoxEditor.DisplayRectangle.Width)-2;
-            LedSize = m / 80;
-            drawingArea = new Rectangle((pictureBoxEditor.DisplayRectangle.Width-m)/2, (pictureBoxEditor.DisplayRectangle.Height-m)/2, m, m);
-            center = new PointF(drawingArea.Left + drawingArea.Width / 2, drawingArea.Top + drawingArea.Height / 2);
-            var mInner = m / 3;
-            innerDrawingArea = new RectangleF(center.X - mInner / 2, center.Y - mInner / 2, mInner, mInner);
+            var m = Math.Min(pictureBoxEditor.DisplayRectangle.Height, pictureBoxEditor.DisplayRectangle.Width) - 2;
+            _ledSize = m / 67;
+            _drawingArea = new Rectangle((pictureBoxEditor.DisplayRectangle.Width - m) / 2,
+                (pictureBoxEditor.DisplayRectangle.Height - m) / 2, m, m);
+            _center = new Point(_drawingArea.Left + _drawingArea.Width / 2, _drawingArea.Top + _drawingArea.Height / 2);
+            var mInner = m / 2;
+            _innerDrawingArea = new RectangleF(_center.X - mInner / 2, _center.Y - mInner / 2, mInner, mInner);
 
-            e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
+            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             e.Graphics.FillRectangle(Brushes.White, pictureBoxEditor.DisplayRectangle);
-            e.Graphics.FillEllipse(Brushes.Yellow, drawingArea);
-            e.Graphics.DrawEllipse(Pens.Black, drawingArea);
-            
-            e.Graphics.FillEllipse(Brushes.White, innerDrawingArea);
-            e.Graphics.DrawEllipse(Pens.Black, innerDrawingArea);
+            e.Graphics.FillEllipse(Brushes.Yellow, _drawingArea);
+            e.Graphics.DrawEllipse(Pens.Black, _drawingArea);
 
-            for (int i = 0; i < LedRows; i++)
+            e.Graphics.FillEllipse(Brushes.White, _innerDrawingArea);
+            e.Graphics.DrawEllipse(Pens.Black, _innerDrawingArea);
+
+            for (var i = 0; i < LedRows; i++)
             {
-                var p = new PointF(center.X, ((drawingArea.Height - innerDrawingArea.Height) / 2) / (LedRows + 1) * (1+i));
+                var p = new PointF(_center.X,
+                    (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1) * (1 + i));
 
-                for (int j = 0; j < LedColumns; j++)
+                for (var j = 0; j < LedColumns; j++)
                 {
-                    e.Graphics.FillEllipse(GetBit(i+j*LedRows)?Brushes.Blue:Brushes.LightYellow, p.X - LedSize/2, p.Y - LedSize/2, LedSize, LedSize);
-                    p = RotatePoint(p, center, 360 / LedColumns);
+                    e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? Brushes.Blue : Brushes.LightYellow,
+                        p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize);
+                    p = RotatePoint(p, _center, 360 / LedColumns);
                 }
             }
         }
 
         private void LoadBin(string path)
         {
-            _bits = new BitArray((File.ReadAllBytes(path)).SelectMany(GetBits).ToArray());
+            _bits = new BitArray(File.ReadAllBytes(path).SelectMany(GetBits).ToArray());
         }
 
         private static IEnumerable<bool> GetBits(byte b)
@@ -116,7 +115,7 @@ namespace FidgetSpinnerEditor
 
         private void pictureBoxEditor_MouseMove(object sender, MouseEventArgs e)
         {
-            if(e.Button != MouseButtons.None)
+            if (e.Button != MouseButtons.None)
             {
                 var p = GetBitByPosition(e.Location);
 
@@ -135,22 +134,64 @@ namespace FidgetSpinnerEditor
 
         private void aboutProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Programmed by Erwin Ried", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Create or edit by clicking or dragging on the spinner. Use the left mouse button to draw " +
+                "and the right to clear. Copy the files from and to your phone using the folder: 'Phone\\Internal " +
+                "shared storage\\HWX-SPINNER'.\n\nProgrammed by Erwin Ried.", "About", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialogBin.Filter = openFileDialogBin.Filter;
+            saveFileDialogBin.InitialDirectory = openFileDialogBin.FileName;
+
+            if (saveFileDialogBin.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                File.WriteAllBytes(saveFileDialogBin.FileName, BitArrayToByteArray(_bits));
+                MessageBox.Show("File saved to: " + saveFileDialogBin.FileName, "Success", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while saving: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public static byte[] BitArrayToByteArray(BitArray bits)
+        {
+            var output = new List<byte>();
+
+            for (var i = 0; i < bits.Length; i += 8)
+            {
+                byte b = 0;
+                if (bits[i + 7]) b++;
+                if (bits[i + 6]) b += 2;
+                if (bits[i + 5]) b += 4;
+                if (bits[i + 4]) b += 8;
+                if (bits[i + 3]) b += 16;
+                if (bits[i + 2]) b += 32;
+                if (bits[i + 1]) b += 64;
+                if (bits[i]) b += 128;
+                output.Add(b);
+            }
+            return output.ToArray();
         }
 
         private int GetBitByPosition(Point point)
         {
-            if (!drawingArea.IsEmpty && !innerDrawingArea.IsEmpty && !center.IsEmpty)
+            if (!_drawingArea.IsEmpty && !_innerDrawingArea.IsEmpty && !_center.IsEmpty)
                 for (var i = 0; i < LedRows; i++)
                 {
-                    var p = new PointF(center.X,
-                        ((drawingArea.Height - innerDrawingArea.Height) / 2) / (LedRows + 1) * (1 + i));
+                    var p = new PointF(_center.X,
+                        (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1) * (1 + i));
 
                     for (var j = 0; j < LedColumns; j++)
                     {
-                        if (new RectangleF(p.X - LedSize / 2, p.Y - LedSize / 2, LedSize, LedSize).Contains(point))
-                            return (i + j * LedRows);
-                        p = RotatePoint(p, center, 360 / LedColumns);
+                        if (new RectangleF(p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize).Contains(point))
+                            return i + j * LedRows;
+                        p = RotatePoint(p, _center, 360 / LedColumns);
                     }
                 }
 

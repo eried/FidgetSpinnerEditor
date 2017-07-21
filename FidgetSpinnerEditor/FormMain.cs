@@ -31,7 +31,7 @@ namespace FidgetSpinnerEditor
         {
             var m = Math.Min(pictureBoxEditor.DisplayRectangle.Height, pictureBoxEditor.DisplayRectangle.Width)-2;
             LedSize = m / 80;
-            drawingArea = new Rectangle(0, 0, m, m);
+            drawingArea = new Rectangle((pictureBoxEditor.DisplayRectangle.Width-m)/2, (pictureBoxEditor.DisplayRectangle.Height-m)/2, m, m);
             center = new PointF(drawingArea.Left + drawingArea.Width / 2, drawingArea.Top + drawingArea.Height / 2);
             var mInner = m / 3;
             innerDrawingArea = new RectangleF(center.X - mInner / 2, center.Y - mInner / 2, mInner, mInner);

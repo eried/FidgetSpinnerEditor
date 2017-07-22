@@ -61,6 +61,7 @@
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.generatePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialogImport = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
             this.SuspendLayout();
@@ -184,6 +185,7 @@
             this.colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
             this.colorsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.colorsToolStripMenuItem.Text = "Colors";
+            this.colorsToolStripMenuItem.Visible = false;
             // 
             // bodyToolStripMenuItem
             // 
@@ -270,21 +272,28 @@
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.exportToolStripMenuItem.Text = "E&xport...";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
             this.toolStripMenuItem5.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem5.Visible = false;
             // 
             // generatePreviewToolStripMenuItem
             // 
             this.generatePreviewToolStripMenuItem.Name = "generatePreviewToolStripMenuItem";
             this.generatePreviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.generatePreviewToolStripMenuItem.Text = "Generate &preview";
+            this.generatePreviewToolStripMenuItem.Visible = false;
             // 
             // openFileDialogImport
             // 
             this.openFileDialogImport.Filter = "Supported images|*.bmp;*.gif;*.png;*.jpeg;*.jpg";
+            // 
+            // saveFileDialogExport
+            // 
+            this.saveFileDialogExport.Filter = "BMP (*.bmp)|*.bmp";
             // 
             // FormMain
             // 
@@ -341,6 +350,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
         private System.Windows.Forms.ToolStripMenuItem generatePreviewToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialogImport;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogExport;
     }
 }
 

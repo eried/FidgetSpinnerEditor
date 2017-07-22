@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -242,6 +243,31 @@ namespace FidgetSpinnerEditor
 
             }
             pictureBoxEditor.Invalidate();
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialogExport.ShowDialog() == DialogResult.OK)
+            {
+                var b = new Bitmap(LedColumns, LedRows);
+
+                for (var x = 0; x < LedColumns; x++)
+                    for (var y = 0; y < LedRows; y++)
+                    {
+                        b.SetPixel(x, y, GetBit(x * LedRows + y)?Color.Black:Color.White);
+                    }
+
+                try
+                {
+                    b.Save(saveFileDialogExport.FileName, ImageFormat.Bmp);
+                    MessageBox.Show("File exported to: " + saveFileDialogExport.FileName, "Success", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while exporting: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }           
         }
 
         private void clockwiseToolStripMenuItem_Click(object sender, EventArgs e)

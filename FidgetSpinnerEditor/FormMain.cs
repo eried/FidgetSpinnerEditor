@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Timer = System.Threading.Timer;
 
 namespace FidgetSpinnerEditor
 {
@@ -21,6 +23,7 @@ namespace FidgetSpinnerEditor
         private double LedAngleBetweenColumns = 360 / LedColumns;
         private Brush _colorBody,_colorEnabled, _colorDisabled;
         private string _lastFile;
+        private Timer _importTimer;
 
         public FormMain()
         {
@@ -82,6 +85,7 @@ namespace FidgetSpinnerEditor
 
         private void UpdateGui()
         {
+            externalEditorToolStripMenuItem.Checked = fileSystemWatcherExternalEditor.EnableRaisingEvents;
             openNextFileToolStripMenuItem.Enabled = !string.IsNullOrEmpty(_lastFile);
             Text = (string.IsNullOrEmpty(_lastFile) ? "" : Path.GetFileName(_lastFile)+ " - ") + "Fidget Spinner Editor";
         }
@@ -270,46 +274,100 @@ namespace FidgetSpinnerEditor
                 }
         }
 
+        private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!fileSystemWatcherExternalEditor.EnableRaisingEvents)
+            {
+                var tmp = Path.GetTempFileName();
+                File.Delete(tmp);
+                Directory.CreateDirectory(tmp);
+
+                var filename = Path.GetFileNameWithoutExtension(tmp) + ".bmp";
+                var f = Path.Combine(tmp, filename);
+                ExportImage(f, true);
+                ShowOpenWithDialog(f);
+                fileSystemWatcherExternalEditor.Filter = filename;
+                fileSystemWatcherExternalEditor.Path = tmp;
+            }
+
+            fileSystemWatcherExternalEditor.EnableRaisingEvents = !fileSystemWatcherExternalEditor.EnableRaisingEvents;
+            UpdateGui();
+        }
+
+        public static void ShowOpenWithDialog(string path)
+        {
+            var args = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "shell32.dll");
+            args += ",OpenAs_RunDLL " + path;
+            Process.Start("rundll32.exe", args);
+        }
+
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogImport.ShowDialog() == DialogResult.OK)
-            {
-                var b = new Bitmap(Image.FromFile(openFileDialogImport.FileName));
+                ImportImage(openFileDialogBin.FileName);
+        }
 
-                for (var x = 0; x < Math.Min(b.Width, LedColumns); x++)
+        private void ImportImage(string filename)
+        {
+            try
+            {
+                using (var fs = new FileStream(filename, FileMode.Open))
+                {
+                    var b = new Bitmap(fs);
+
+                    for (var x = 0; x < Math.Min(b.Width, LedColumns); x++)
                     for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
                     {
                         var p = b.GetPixel(x, y);
-                        _bits[y + x* LedRows] = (p.R + p.G + p.B) / 3 < (byte.MaxValue / 2);
+                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < (byte.MaxValue / 2);
                     }
 
+                    b.Dispose();
+                    pictureBoxEditor.Invalidate();
+                }
             }
-            pictureBoxEditor.Invalidate();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while importing: " + ex.Message, "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void fileSystemWatcherExternalEditor_Changed(object sender, FileSystemEventArgs e)
+        {
+            _importTimer?.Dispose();
+            _importTimer = new System.Threading.Timer(o => ImportImage(e.FullPath), null, 100, System.Threading.Timeout.Infinite);
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (saveFileDialogExport.ShowDialog() == DialogResult.OK)
+                ExportImage(saveFileDialogExport.FileName);        
+        }
+
+        private void ExportImage(string filename, bool silent = false)
+        {
+            var b = new Bitmap(LedColumns, LedRows);
+
+            for (var x = 0; x < LedColumns; x++)
+            for (var y = 0; y < LedRows; y++)
             {
-                var b = new Bitmap(LedColumns, LedRows);
+                b.SetPixel(x, y, GetBit(x * LedRows + y) ? Color.Black : Color.White);
+            }
 
-                for (var x = 0; x < LedColumns; x++)
-                    for (var y = 0; y < LedRows; y++)
-                    {
-                        b.SetPixel(x, y, GetBit(x * LedRows + y)?Color.Black:Color.White);
-                    }
+            try
+            {
+                b.Save(filename, ImageFormat.Bmp);
 
-                try
-                {
-                    b.Save(saveFileDialogExport.FileName, ImageFormat.Bmp);
-                    MessageBox.Show("File exported to: " + saveFileDialogExport.FileName, "Success", MessageBoxButtons.OK,
+                if (!silent)
+                    MessageBox.Show("File exported to: " + filename, "Success", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error while exporting: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }           
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while exporting: " + ex.Message, "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void clockwiseToolStripMenuItem_Click(object sender, EventArgs e)

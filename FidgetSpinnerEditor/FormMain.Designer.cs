@@ -63,8 +63,12 @@
             this.openFileDialogImport = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             this.openNextFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.externalEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSystemWatcherExternalEditor = new System.IO.FileSystemWatcher();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherExternalEditor)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBoxEditor
@@ -245,7 +249,9 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.invertToolStripMenuItem});
+            this.invertToolStripMenuItem,
+            this.toolStripMenuItem6,
+            this.externalEditorToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -253,7 +259,8 @@
             // invertToolStripMenuItem
             // 
             this.invertToolStripMenuItem.Name = "invertToolStripMenuItem";
-            this.invertToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.invertToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.invertToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.invertToolStripMenuItem.Text = "&Invert";
             this.invertToolStripMenuItem.Click += new System.EventHandler(this.invertToolStripMenuItem_Click);
             // 
@@ -306,6 +313,25 @@
             this.openNextFileToolStripMenuItem.Text = "Load next &file";
             this.openNextFileToolStripMenuItem.Click += new System.EventHandler(this.openNextFileToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(168, 6);
+            // 
+            // externalEditorToolStripMenuItem
+            // 
+            this.externalEditorToolStripMenuItem.Name = "externalEditorToolStripMenuItem";
+            this.externalEditorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.externalEditorToolStripMenuItem.Text = "Use external editor";
+            this.externalEditorToolStripMenuItem.Click += new System.EventHandler(this.externalEditorToolStripMenuItem_Click);
+            // 
+            // fileSystemWatcherExternalEditor
+            // 
+            this.fileSystemWatcherExternalEditor.Filter = "*.bmp";
+            this.fileSystemWatcherExternalEditor.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+            this.fileSystemWatcherExternalEditor.SynchronizingObject = this;
+            this.fileSystemWatcherExternalEditor.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherExternalEditor_Changed);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -321,6 +347,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).EndInit();
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherExternalEditor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -362,6 +389,9 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogImport;
         private System.Windows.Forms.SaveFileDialog saveFileDialogExport;
         private System.Windows.Forms.ToolStripMenuItem openNextFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem externalEditorToolStripMenuItem;
+        private System.IO.FileSystemWatcher fileSystemWatcherExternalEditor;
     }
 }
 

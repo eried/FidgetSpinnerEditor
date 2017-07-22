@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Timer = System.Threading.Timer;
 
@@ -17,13 +18,13 @@ namespace FidgetSpinnerEditor
         private const int LedRows = 16, LedColumns = 120;
         private BitArray _bits = new BitArray(LedRows * LedColumns);
         private PointF _center;
+        private Brush _colorBody, _colorEnabled, _colorDisabled;
         private Rectangle _drawingArea;
-        private RectangleF _innerDrawingArea;
-        private int _ledSize, _rotation = 0;
-        private double LedAngleBetweenColumns = 360 / LedColumns;
-        private Brush _colorBody,_colorEnabled, _colorDisabled;
-        private string _lastFile;
         private Timer _importTimer;
+        private RectangleF _innerDrawingArea;
+        private string _lastFile;
+        private int _ledSize, _rotation;
+        private const double LedAngleBetweenColumns = 360 / LedColumns;
 
         public FormMain()
         {
@@ -60,12 +61,12 @@ namespace FidgetSpinnerEditor
             var yspacing = (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1);
             for (var i = 0; i < LedRows; i++)
             {
-                var p = new PointF(_center.X,_drawingArea.Top + (yspacing * (1 + i)));
+                var p = new PointF(_center.X, _drawingArea.Top + yspacing * (1 + i));
                 var r = _rotation;
 
                 for (var j = 0; j < LedColumns; j++)
                 {
-                    p = RotatePoint(p, _center, r+ LedAngleBetweenColumns);
+                    p = RotatePoint(p, _center, r + LedAngleBetweenColumns);
                     r = 0;
 
                     e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? _colorEnabled : _colorDisabled,
@@ -87,7 +88,8 @@ namespace FidgetSpinnerEditor
         {
             externalEditorToolStripMenuItem.Checked = fileSystemWatcherExternalEditor.EnableRaisingEvents;
             openNextFileToolStripMenuItem.Enabled = !string.IsNullOrEmpty(_lastFile);
-            Text = (string.IsNullOrEmpty(_lastFile) ? "" : Path.GetFileName(_lastFile)+ " - ") + "Fidget Spinner Editor";
+            Text = (string.IsNullOrEmpty(_lastFile) ? "" : Path.GetFileName(_lastFile) + " - ") +
+                   "Fidget Spinner Editor";
         }
 
         private static IEnumerable<bool> GetBits(byte b)
@@ -114,11 +116,9 @@ namespace FidgetSpinnerEditor
 
             return new PointF
             {
-                X =
-                    (float) (cosTheta * (pointToRotate.X - centerPoint.X) -
+                X = (float) (cosTheta * (pointToRotate.X - centerPoint.X) -
                              sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X),
-                Y =
-                    (float) (sinTheta * (pointToRotate.X - centerPoint.X) +
+                Y = (float) (sinTheta * (pointToRotate.X - centerPoint.X) +
                              cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)
             };
         }
@@ -160,7 +160,8 @@ namespace FidgetSpinnerEditor
 
         private void aboutProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Create or edit by clicking or dragging on the spinner. Use the left mouse button to draw " +
+            MessageBox.Show(
+                "Create or edit by clicking or dragging on the spinner. Use the left mouse button to draw " +
                 "and the right to clear. Copy the files from and to your phone using the folder: 'Phone\\Internal " +
                 "shared storage\\HWX-SPINNER'.\n\nProgrammed by Erwin Ried.", "About", MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -221,7 +222,7 @@ namespace FidgetSpinnerEditor
         {
             _colorBody = new SolidBrush(colorDialogBody.Color);
             _colorDisabled = new SolidBrush(colorDialogHoles.Color);
-            _colorEnabled = new SolidBrush(colorDialogLights.Color); 
+            _colorEnabled = new SolidBrush(colorDialogLights.Color);
             pictureBoxEditor.Invalidate();
         }
 
@@ -258,7 +259,6 @@ namespace FidgetSpinnerEditor
 
         private void pictureBoxEditor_DragDrop(object sender, DragEventArgs e)
         {
-
         }
 
         private void openNextFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -266,15 +266,18 @@ namespace FidgetSpinnerEditor
             var loadNext = false;
             foreach (var f in Directory.GetFiles(Path.GetDirectoryName(_lastFile), "*.bin"))
                 if (f == _lastFile)
+                {
                     loadNext = true;
+                }
                 else if (loadNext)
                 {
                     LoadBin(f);
                     return;
                 }
 
-            MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.", "Next file", MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation);
+            MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.",
+                "Next file", MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation);
         }
 
         private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -322,7 +325,7 @@ namespace FidgetSpinnerEditor
                     for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
                     {
                         var p = b.GetPixel(x, y);
-                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < (byte.MaxValue / 2);
+                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < byte.MaxValue / 2;
                     }
 
                     b.Dispose();
@@ -339,13 +342,13 @@ namespace FidgetSpinnerEditor
         private void fileSystemWatcherExternalEditor_Changed(object sender, FileSystemEventArgs e)
         {
             _importTimer?.Dispose();
-            _importTimer = new System.Threading.Timer(o => ImportImage(e.FullPath), null, 100, System.Threading.Timeout.Infinite);
+            _importTimer = new Timer(o => ImportImage(e.FullPath), null, 100, Timeout.Infinite);
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (saveFileDialogExport.ShowDialog() == DialogResult.OK)
-                ExportImage(saveFileDialogExport.FileName);        
+                ExportImage(saveFileDialogExport.FileName);
         }
 
         private void ExportImage(string filename, bool silent = false)
@@ -354,9 +357,7 @@ namespace FidgetSpinnerEditor
 
             for (var x = 0; x < LedColumns; x++)
             for (var y = 0; y < LedRows; y++)
-            {
                 b.SetPixel(x, y, GetBit(x * LedRows + y) ? Color.Black : Color.White);
-            }
 
             try
             {
@@ -386,7 +387,7 @@ namespace FidgetSpinnerEditor
                 var yspacing = (_drawingArea.Height - _innerDrawingArea.Height) / 2 / (LedRows + 1);
                 for (var i = 0; i < LedRows; i++)
                 {
-                    var p = new PointF(_center.X, _drawingArea.Top + (yspacing * (1 + i)));
+                    var p = new PointF(_center.X, _drawingArea.Top + yspacing * (1 + i));
                     var r = _rotation;
 
                     for (var j = 0; j < LedColumns; j++)
@@ -399,7 +400,6 @@ namespace FidgetSpinnerEditor
                     }
                 }
             }
-
             return -1;
         }
     }

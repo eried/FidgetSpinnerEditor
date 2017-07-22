@@ -22,6 +22,7 @@ namespace FidgetSpinnerEditor
         public FormMain()
         {
             InitializeComponent();
+            pictureBoxEditor.AllowDrop = true;
         }
 
         private void pictureBoxEditor_Paint(object sender, PaintEventArgs e)
@@ -186,6 +187,60 @@ namespace FidgetSpinnerEditor
         private void counterclockwiseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _rotation -= 5;
+            pictureBoxEditor.Invalidate();
+        }
+
+        private void bodyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialogBody.ShowDialog();
+        }
+
+        private void lightsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialogLights.ShowDialog();
+        }
+
+        private void holesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialogHoles.ShowDialog();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _bits.SetAll(false);
+            pictureBoxEditor.Invalidate();
+        }
+
+        private void invertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _bits.Not();
+            pictureBoxEditor.Invalidate();
+        }
+
+        private void pictureBoxEditor_DragEnter(object sender, DragEventArgs e)
+        {
+            //e.Effect = DragDropEffects.Move;
+        }
+
+        private void pictureBoxEditor_DragDrop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialogImport.ShowDialog() == DialogResult.OK)
+            {
+                var b = new Bitmap(Image.FromFile(openFileDialogImport.FileName));
+
+                for (var x = 0; x < Math.Min(b.Width, LedColumns); x++)
+                    for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
+                    {
+                        var p = b.GetPixel(x, y);
+                        _bits[y + x* LedRows] = (p.R + p.G + p.B) / 3 < (byte.MaxValue / 2);
+                    }
+
+            }
             pictureBoxEditor.Invalidate();
         }
 

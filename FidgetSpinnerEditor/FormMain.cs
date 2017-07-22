@@ -270,8 +270,11 @@ namespace FidgetSpinnerEditor
                 else if (loadNext)
                 {
                     LoadBin(f);
-                    break;
+                    return;
                 }
+
+            MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.", "Next file", MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
         }
 
         private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)

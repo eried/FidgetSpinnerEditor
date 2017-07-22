@@ -71,6 +71,7 @@
             this.pictureBoxEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxEditor.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureBoxEditor.Location = new System.Drawing.Point(12, 27);
             this.pictureBoxEditor.Name = "pictureBoxEditor";
             this.pictureBoxEditor.Size = new System.Drawing.Size(640, 484);

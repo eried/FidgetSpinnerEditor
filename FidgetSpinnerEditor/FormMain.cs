@@ -19,11 +19,20 @@ namespace FidgetSpinnerEditor
         private RectangleF _innerDrawingArea;
         private int _ledSize, _rotation = 0;
         private double LedAngleBetweenColumns = 360 / LedColumns;
+        private Brush _colorBody,_colorEnabled, _colorDisabled;
+        private string _lastFile;
 
         public FormMain()
         {
             InitializeComponent();
-            pictureBoxEditor.AllowDrop = true;
+            UpdateGui();
+            //pictureBoxEditor.AllowDrop = true;
+
+            // Default colors
+            colorDialogBody.Color = Color.Yellow;
+            colorDialogHoles.Color = Color.LightGoldenrodYellow;
+            colorDialogLights.Color = Color.Blue;
+            UpdateColors();
         }
 
         private void pictureBoxEditor_Paint(object sender, PaintEventArgs e)
@@ -39,7 +48,7 @@ namespace FidgetSpinnerEditor
             e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             e.Graphics.FillRectangle(Brushes.White, pictureBoxEditor.DisplayRectangle);
-            e.Graphics.FillEllipse(Brushes.Yellow, _drawingArea);
+            e.Graphics.FillEllipse(_colorBody, _drawingArea);
             e.Graphics.DrawEllipse(Pens.Black, _drawingArea);
 
             e.Graphics.FillEllipse(Brushes.White, _innerDrawingArea);
@@ -56,7 +65,7 @@ namespace FidgetSpinnerEditor
                     p = RotatePoint(p, _center, r+ LedAngleBetweenColumns);
                     r = 0;
 
-                    e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? Brushes.Blue : Brushes.LightYellow,
+                    e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? _colorEnabled : _colorDisabled,
                         p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize);
                 }
             }
@@ -64,7 +73,17 @@ namespace FidgetSpinnerEditor
 
         private void LoadBin(string path)
         {
+            _lastFile = path;
             _bits = new BitArray(File.ReadAllBytes(path).SelectMany(GetBits).ToArray());
+            pictureBoxEditor.Invalidate();
+
+            UpdateGui();
+        }
+
+        private void UpdateGui()
+        {
+            openNextFileToolStripMenuItem.Enabled = !string.IsNullOrEmpty(_lastFile);
+            Text = (string.IsNullOrEmpty(_lastFile) ? "" : Path.GetFileName(_lastFile)+ " - ") + "Fidget Spinner Editor";
         }
 
         private static IEnumerable<bool> GetBits(byte b)
@@ -113,10 +132,7 @@ namespace FidgetSpinnerEditor
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogBin.ShowDialog() == DialogResult.OK)
-            {
                 LoadBin(openFileDialogBin.FileName);
-                pictureBoxEditor.Invalidate();
-            }
         }
 
         private void pictureBoxEditor_MouseMove(object sender, MouseEventArgs e)
@@ -194,21 +210,34 @@ namespace FidgetSpinnerEditor
         private void bodyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             colorDialogBody.ShowDialog();
+            UpdateColors();
+        }
+
+        private void UpdateColors()
+        {
+            _colorBody = new SolidBrush(colorDialogBody.Color);
+            _colorDisabled = new SolidBrush(colorDialogHoles.Color);
+            _colorEnabled = new SolidBrush(colorDialogLights.Color); 
+            pictureBoxEditor.Invalidate();
         }
 
         private void lightsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             colorDialogLights.ShowDialog();
+            UpdateColors();
         }
 
         private void holesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             colorDialogHoles.ShowDialog();
+            UpdateColors();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _bits.SetAll(false);
+            _lastFile = null;
+            UpdateGui();
             pictureBoxEditor.Invalidate();
         }
 
@@ -226,6 +255,19 @@ namespace FidgetSpinnerEditor
         private void pictureBoxEditor_DragDrop(object sender, DragEventArgs e)
         {
 
+        }
+
+        private void openNextFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var loadNext = false;
+            foreach (var f in Directory.GetFiles(Path.GetDirectoryName(_lastFile), "*.bin"))
+                if (f == _lastFile)
+                    loadNext = true;
+                else if (loadNext)
+                {
+                    LoadBin(f);
+                    break;
+                }
         }
 
         private void importToolStripMenuItem_Click(object sender, EventArgs e)

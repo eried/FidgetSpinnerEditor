@@ -1,6 +1,8 @@
 # Fidget Spinner Editor
 Editor for the "MATEMINCO Intelligent LED APP Control Fingertips Gyro Rotation Chargeable EDC Hand Spinner" bin files
 
+Demo video: https://www.youtube.com/watch?v=BW_pvs4CBdw
+
 ![](FidgetSpinnerEditor/img/screenshot.PNG)
 
 Buy one here to give me a cent:

@@ -265,7 +265,12 @@ namespace FidgetSpinnerEditor
         private void openNextFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var loadNext = false;
-            foreach (var f in Directory.GetFiles(Path.GetDirectoryName(_lastFile), "*.bin"))
+            var files = Directory.GetFiles(Path.GetDirectoryName(_lastFile), "*.bin");
+
+            if (!files.Any())
+                return;
+
+            foreach (var f in files)
                 if (f == _lastFile)
                 {
                     loadNext = true;
@@ -276,9 +281,11 @@ namespace FidgetSpinnerEditor
                     return;
                 }
 
-            MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.",
+            LoadBin(files[0]);
+
+            /*MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.",
                 "Next file", MessageBoxButtons.OK,
-                MessageBoxIcon.Exclamation);
+                MessageBoxIcon.Exclamation);*/
         }
 
         private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)

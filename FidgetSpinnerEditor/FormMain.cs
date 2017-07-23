@@ -30,6 +30,7 @@ namespace FidgetSpinnerEditor
         {
             InitializeComponent();
             UpdateGui();
+            fileSystemWatcherExternalEditor.EnableRaisingEvents = false;
             //pictureBoxEditor.AllowDrop = true;
 
             // Default colors
@@ -37,6 +38,7 @@ namespace FidgetSpinnerEditor
             colorDialogHoles.Color = Color.LightGoldenrodYellow;
             colorDialogLights.Color = Color.Blue;
             UpdateColors();
+            UpdateGui();
         }
 
         private void pictureBoxEditor_Paint(object sender, PaintEventArgs e)
@@ -80,7 +82,6 @@ namespace FidgetSpinnerEditor
             _lastFile = path;
             _bits = new BitArray(File.ReadAllBytes(path).SelectMany(GetBits).ToArray());
             pictureBoxEditor.Invalidate();
-
             UpdateGui();
         }
 
@@ -310,7 +311,7 @@ namespace FidgetSpinnerEditor
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogImport.ShowDialog() == DialogResult.OK)
-                ImportImage(openFileDialogBin.FileName);
+                ImportImage(openFileDialogImport.FileName);
         }
 
         private void ImportImage(string filename)
@@ -325,7 +326,7 @@ namespace FidgetSpinnerEditor
                     for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
                     {
                         var p = b.GetPixel(x, y);
-                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < byte.MaxValue / 2;
+                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < 100;
                     }
 
                     b.Dispose();
@@ -343,6 +344,22 @@ namespace FidgetSpinnerEditor
         {
             _importTimer?.Dispose();
             _importTimer = new Timer(o => ImportImage(e.FullPath), null, 100, Timeout.Infinite);
+        }
+
+        private void reverseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tmp = new bool[_bits.Count];
+
+            var i = 0;// LedColumns*LedRows;
+                      /*for (var x = 0; x < LedColumns; x++)
+                          for (var y = 0; y < LedRows; y++)*/
+            for (var x = LedColumns-1; x>=0; x--)
+                //  for (var y = LedRows-1; y >=0; y--)
+                for (var y = 0; y < LedRows; y++)
+                    tmp[i++] = _bits[x * LedRows + y];
+
+            _bits = new BitArray(tmp);
+            pictureBoxEditor.Invalidate();
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)

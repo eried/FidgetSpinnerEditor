@@ -66,6 +66,7 @@
             this.openFileDialogImport = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             this.fileSystemWatcherExternalEditor = new System.IO.FileSystemWatcher();
+            this.reverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherExternalEditor)).BeginInit();
@@ -194,6 +195,7 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.invertToolStripMenuItem,
+            this.reverseToolStripMenuItem,
             this.toolStripMenuItem6,
             this.externalEditorToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -204,8 +206,8 @@
             // 
             this.invertToolStripMenuItem.Name = "invertToolStripMenuItem";
             this.invertToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.invertToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.invertToolStripMenuItem.Text = "&Invert";
+            this.invertToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.invertToolStripMenuItem.Text = "&Invert colors";
             this.invertToolStripMenuItem.Click += new System.EventHandler(this.invertToolStripMenuItem_Click);
             // 
             // toolStripMenuItem6
@@ -274,21 +276,21 @@
             // bodyToolStripMenuItem
             // 
             this.bodyToolStripMenuItem.Name = "bodyToolStripMenuItem";
-            this.bodyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bodyToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.bodyToolStripMenuItem.Text = "&Body...";
             this.bodyToolStripMenuItem.Click += new System.EventHandler(this.bodyToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(128, 22);
             this.toolStripMenuItem3.Text = "&Enabled...";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.lightsToolStripMenuItem_Click);
             // 
             // holesToolStripMenuItem
             // 
             this.holesToolStripMenuItem.Name = "holesToolStripMenuItem";
-            this.holesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.holesToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.holesToolStripMenuItem.Text = "&Disabled...";
             this.holesToolStripMenuItem.Click += new System.EventHandler(this.holesToolStripMenuItem_Click);
             // 
@@ -336,9 +338,18 @@
             // 
             // fileSystemWatcherExternalEditor
             // 
+            this.fileSystemWatcherExternalEditor.EnableRaisingEvents = true;
             this.fileSystemWatcherExternalEditor.NotifyFilter = System.IO.NotifyFilters.LastWrite;
             this.fileSystemWatcherExternalEditor.SynchronizingObject = this;
             this.fileSystemWatcherExternalEditor.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherExternalEditor_Changed);
+            // 
+            // reverseToolStripMenuItem
+            // 
+            this.reverseToolStripMenuItem.Name = "reverseToolStripMenuItem";
+            this.reverseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.reverseToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.reverseToolStripMenuItem.Text = "&Reverse direction";
+            this.reverseToolStripMenuItem.Click += new System.EventHandler(this.reverseToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -400,6 +411,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
         private System.Windows.Forms.ToolStripMenuItem externalEditorToolStripMenuItem;
         private System.IO.FileSystemWatcher fileSystemWatcherExternalEditor;
+        private System.Windows.Forms.ToolStripMenuItem reverseToolStripMenuItem;
     }
 }
 

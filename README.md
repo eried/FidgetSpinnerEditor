@@ -12,3 +12,8 @@ Buy one here to give me a cent:
 
 Copy your design to your phone using the folder: `Phone\Internal shared storage\HWX-SPINNER` (or to the Windows uploader app provided by the manufacturer) and try it in the spinner:
 ![](FidgetSpinnerEditor/img/example.jpg)
+
+You can run the program with mono in Linux/MacOS:
+![](FidgetSpinnerEditor/img/mono.PNG)
+
+

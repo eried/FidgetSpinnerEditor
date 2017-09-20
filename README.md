@@ -6,7 +6,7 @@ Demo video: https://www.youtube.com/watch?v=BW_pvs4CBdw
 ![](FidgetSpinnerEditor/img/screenshot.PNG)
 
 Buy one here to give me a cent:
-* http://s.click.aliexpress.com/e/jIuB6ai
+* http://s.click.aliexpress.com/e/RjaAmMZ
 
 * https://www.banggood.com/MATEMINCO-Intelligent-LED-APP-Control-Fingertips-Gyro-Rotation-Chargeable-EDC-Hand-Spinner-p-1154135.html?p=B701157141617201611A
 

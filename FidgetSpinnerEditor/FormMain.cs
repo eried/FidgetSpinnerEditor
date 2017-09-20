@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using FidgetSpinnerEditor.Properties;
 using Timer = System.Threading.Timer;
 
 namespace FidgetSpinnerEditor
@@ -33,12 +34,18 @@ namespace FidgetSpinnerEditor
             fileSystemWatcherExternalEditor.EnableRaisingEvents = false;
             //pictureBoxEditor.AllowDrop = true;
 
-            // Default colors
-            colorDialogBody.Color = Color.Yellow;
-            colorDialogHoles.Color = Color.LightGoldenrodYellow;
-            colorDialogLights.Color = Color.Blue;
-            UpdateColors();
+            LoadColors();
             UpdateGui();
+        }
+
+        private void LoadColors()
+        {
+            // Default colors
+            colorDialogBody.Color = Settings.Default.colorBody;
+            colorDialogHoles.Color = Settings.Default.colorDisabled;
+            colorDialogLights.Color = Settings.Default.colorEnabled;
+
+            UpdateColors();
         }
 
         private void pictureBoxEditor_Paint(object sender, PaintEventArgs e)
@@ -225,7 +232,14 @@ namespace FidgetSpinnerEditor
             _colorBody = new SolidBrush(colorDialogBody.Color);
             _colorDisabled = new SolidBrush(colorDialogHoles.Color);
             _colorEnabled = new SolidBrush(colorDialogLights.Color);
+
             pictureBoxEditor.Invalidate();
+
+            // Save color configuration
+            Settings.Default.colorBody = colorDialogBody.Color;
+            Settings.Default.colorDisabled = colorDialogHoles.Color;
+            Settings.Default.colorEnabled = colorDialogLights.Color;
+            Settings.Default.Save();
         }
 
         private void lightsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -301,7 +315,11 @@ namespace FidgetSpinnerEditor
             var filename = Path.GetFileNameWithoutExtension(tmp) + ".bmp";
             var f = Path.Combine(tmp, filename);
             ExportImage(f, true);
-            ShowOpenWithDialog(f);
+
+            if (IsRunningOnMono())
+                Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = f });
+            else
+                ShowOpenWithDialog(f);
 
             // Start monitoring
             fileSystemWatcherExternalEditor.Filter = filename;
@@ -309,6 +327,12 @@ namespace FidgetSpinnerEditor
             fileSystemWatcherExternalEditor.EnableRaisingEvents = true;
 
             UpdateGui();
+        }
+
+        // https://stackoverflow.com/questions/721161/how-to-detect-which-net-runtime-is-being-used-ms-vs-mono
+        public static bool IsRunningOnMono()
+        {
+            return Type.GetType("Mono.Runtime") != null;
         }
 
         public static void ShowOpenWithDialog(string path)
@@ -375,6 +399,12 @@ namespace FidgetSpinnerEditor
         private void openPrevFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadNext(true);
+        }
+
+        private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.Default.Reset();
+            LoadColors();
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)

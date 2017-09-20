@@ -68,6 +68,9 @@
             this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             this.fileSystemWatcherExternalEditor = new System.IO.FileSystemWatcher();
             this.openPrevFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+            this.resetToDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherExternalEditor)).BeginInit();
@@ -110,6 +113,7 @@
             this.toolStripMenuItem2,
             this.openToolStripMenuItem,
             this.importToolStripMenuItem,
+            this.toolStripMenuItem8,
             this.openPrevFileToolStripMenuItem,
             this.openNextFileToolStripMenuItem,
             this.toolStripMenuItem4,
@@ -138,7 +142,7 @@
             this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.openToolStripMenuItem.Text = "&Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -148,8 +152,8 @@
             this.openNextFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openNextFileToolStripMenuItem.Image")));
             this.openNextFileToolStripMenuItem.Name = "openNextFileToolStripMenuItem";
             this.openNextFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
-            this.openNextFileToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.openNextFileToolStripMenuItem.Text = "Load next &file";
+            this.openNextFileToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.openNextFileToolStripMenuItem.Text = "Next &file";
             this.openNextFileToolStripMenuItem.Click += new System.EventHandler(this.openNextFileToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
@@ -277,7 +281,9 @@
             this.colorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.bodyToolStripMenuItem,
             this.toolStripMenuItem3,
-            this.holesToolStripMenuItem});
+            this.holesToolStripMenuItem,
+            this.toolStripMenuItem7,
+            this.resetToDefaultToolStripMenuItem});
             this.colorsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("colorsToolStripMenuItem.Image")));
             this.colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
             this.colorsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
@@ -358,9 +364,26 @@
             this.openPrevFileToolStripMenuItem.Enabled = false;
             this.openPrevFileToolStripMenuItem.Name = "openPrevFileToolStripMenuItem";
             this.openPrevFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
-            this.openPrevFileToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.openPrevFileToolStripMenuItem.Text = "Load &previous file";
+            this.openPrevFileToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.openPrevFileToolStripMenuItem.Text = "Previous file";
             this.openPrevFileToolStripMenuItem.Click += new System.EventHandler(this.openPrevFileToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(153, 6);
+            // 
+            // resetToDefaultToolStripMenuItem
+            // 
+            this.resetToDefaultToolStripMenuItem.Name = "resetToDefaultToolStripMenuItem";
+            this.resetToDefaultToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.resetToDefaultToolStripMenuItem.Text = "&Reset to default";
+            this.resetToDefaultToolStripMenuItem.Click += new System.EventHandler(this.resetToDefaultToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem8
+            // 
+            this.toolStripMenuItem8.Name = "toolStripMenuItem8";
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(184, 6);
             // 
             // FormMain
             // 
@@ -424,6 +447,9 @@
         private System.IO.FileSystemWatcher fileSystemWatcherExternalEditor;
         private System.Windows.Forms.ToolStripMenuItem reverseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openPrevFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripMenuItem resetToDefaultToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
     }
 }
 

@@ -87,8 +87,9 @@ namespace FidgetSpinnerEditor
 
         private void UpdateGui()
         {
-            externalEditorToolStripMenuItem.Checked = fileSystemWatcherExternalEditor.EnableRaisingEvents;
+            //externalEditorToolStripMenuItem.Checked = fileSystemWatcherExternalEditor.EnableRaisingEvents;
             openNextFileToolStripMenuItem.Enabled = !string.IsNullOrEmpty(_lastFile);
+            openPrevFileToolStripMenuItem.Enabled = openNextFileToolStripMenuItem.Enabled;
             Text = (string.IsNullOrEmpty(_lastFile) ? "" : Path.GetFileName(_lastFile) + " - ") +
                    "Fidget Spinner Editor";
         }
@@ -264,13 +265,18 @@ namespace FidgetSpinnerEditor
 
         private void openNextFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            LoadNext();
+        }
+
+        private void LoadNext(bool backwards = false)
+        {
             var loadNext = false;
             var files = Directory.GetFiles(Path.GetDirectoryName(_lastFile), "*.bin");
 
             if (!files.Any())
                 return;
 
-            foreach (var f in files)
+            foreach (var f in backwards?files.Reverse():files)
                 if (f == _lastFile)
                 {
                     loadNext = true;
@@ -281,30 +287,27 @@ namespace FidgetSpinnerEditor
                     return;
                 }
 
-            LoadBin(files[0]);
-
-            /*MessageBox.Show(_lastFile + " is the last file in the directory.\n\nOpen another file and retry.",
-                "Next file", MessageBoxButtons.OK,
-                MessageBoxIcon.Exclamation);*/
+            LoadBin(files[backwards?files.Length-1:0]);
         }
 
         private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!fileSystemWatcherExternalEditor.EnableRaisingEvents)
-            {
-                var tmp = Path.GetTempFileName();
-                File.Delete(tmp);
-                Directory.CreateDirectory(tmp);
+        { 
+            fileSystemWatcherExternalEditor.EnableRaisingEvents = false;
 
-                var filename = Path.GetFileNameWithoutExtension(tmp) + ".bmp";
-                var f = Path.Combine(tmp, filename);
-                ExportImage(f, true);
-                ShowOpenWithDialog(f);
-                fileSystemWatcherExternalEditor.Filter = filename;
-                fileSystemWatcherExternalEditor.Path = tmp;
-            }
+            var tmp = Path.GetTempFileName();
+            File.Delete(tmp);
+            Directory.CreateDirectory(tmp);
 
-            fileSystemWatcherExternalEditor.EnableRaisingEvents = !fileSystemWatcherExternalEditor.EnableRaisingEvents;
+            var filename = Path.GetFileNameWithoutExtension(tmp) + ".bmp";
+            var f = Path.Combine(tmp, filename);
+            ExportImage(f, true);
+            ShowOpenWithDialog(f);
+
+            // Start monitoring
+            fileSystemWatcherExternalEditor.Filter = filename;
+            fileSystemWatcherExternalEditor.Path = tmp;
+            fileSystemWatcherExternalEditor.EnableRaisingEvents = true;
+
             UpdateGui();
         }
 
@@ -367,6 +370,11 @@ namespace FidgetSpinnerEditor
 
             _bits = new BitArray(tmp);
             pictureBoxEditor.Invalidate();
+        }
+
+        private void openPrevFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadNext(true);
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)

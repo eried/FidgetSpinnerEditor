@@ -44,6 +44,7 @@
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.externalEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +67,7 @@
             this.openFileDialogImport = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             this.fileSystemWatcherExternalEditor = new System.IO.FileSystemWatcher();
-            this.reverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openPrevFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEditor)).BeginInit();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherExternalEditor)).BeginInit();
@@ -108,8 +109,9 @@
             this.newToolStripMenuItem,
             this.toolStripMenuItem2,
             this.openToolStripMenuItem,
-            this.openNextFileToolStripMenuItem,
             this.importToolStripMenuItem,
+            this.openPrevFileToolStripMenuItem,
+            this.openNextFileToolStripMenuItem,
             this.toolStripMenuItem4,
             this.saveAsToolStripMenuItem,
             this.exportToolStripMenuItem,
@@ -122,21 +124,21 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(206, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(213, 6);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.openToolStripMenuItem.Text = "&Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -146,48 +148,48 @@
             this.openNextFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openNextFileToolStripMenuItem.Image")));
             this.openNextFileToolStripMenuItem.Name = "openNextFileToolStripMenuItem";
             this.openNextFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
-            this.openNextFileToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.openNextFileToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.openNextFileToolStripMenuItem.Text = "Load next &file";
             this.openNextFileToolStripMenuItem.Click += new System.EventHandler(this.openNextFileToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.importToolStripMenuItem.Text = "Import...";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(206, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(213, 6);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveAsToolStripMenuItem.Image")));
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.saveAsToolStripMenuItem.Text = "&Save as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.exportToolStripMenuItem.Text = "E&xport...";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(206, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(213, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.quitToolStripMenuItem.Text = "&Exit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -210,17 +212,25 @@
             this.invertToolStripMenuItem.Text = "&Invert colors";
             this.invertToolStripMenuItem.Click += new System.EventHandler(this.invertToolStripMenuItem_Click);
             // 
+            // reverseToolStripMenuItem
+            // 
+            this.reverseToolStripMenuItem.Name = "reverseToolStripMenuItem";
+            this.reverseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.reverseToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.reverseToolStripMenuItem.Text = "&Reverse direction";
+            this.reverseToolStripMenuItem.Click += new System.EventHandler(this.reverseToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(168, 6);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(202, 6);
             // 
             // externalEditorToolStripMenuItem
             // 
             this.externalEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("externalEditorToolStripMenuItem.Image")));
             this.externalEditorToolStripMenuItem.Name = "externalEditorToolStripMenuItem";
-            this.externalEditorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.externalEditorToolStripMenuItem.Text = "Use external editor";
+            this.externalEditorToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.externalEditorToolStripMenuItem.Text = "&Edit in external editor";
             this.externalEditorToolStripMenuItem.Click += new System.EventHandler(this.externalEditorToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
@@ -276,21 +286,21 @@
             // bodyToolStripMenuItem
             // 
             this.bodyToolStripMenuItem.Name = "bodyToolStripMenuItem";
-            this.bodyToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.bodyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.bodyToolStripMenuItem.Text = "&Body...";
             this.bodyToolStripMenuItem.Click += new System.EventHandler(this.bodyToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(128, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem3.Text = "&Enabled...";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.lightsToolStripMenuItem_Click);
             // 
             // holesToolStripMenuItem
             // 
             this.holesToolStripMenuItem.Name = "holesToolStripMenuItem";
-            this.holesToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.holesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.holesToolStripMenuItem.Text = "&Disabled...";
             this.holesToolStripMenuItem.Click += new System.EventHandler(this.holesToolStripMenuItem_Click);
             // 
@@ -343,13 +353,14 @@
             this.fileSystemWatcherExternalEditor.SynchronizingObject = this;
             this.fileSystemWatcherExternalEditor.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherExternalEditor_Changed);
             // 
-            // reverseToolStripMenuItem
+            // openPrevFileToolStripMenuItem
             // 
-            this.reverseToolStripMenuItem.Name = "reverseToolStripMenuItem";
-            this.reverseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.reverseToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.reverseToolStripMenuItem.Text = "&Reverse direction";
-            this.reverseToolStripMenuItem.Click += new System.EventHandler(this.reverseToolStripMenuItem_Click);
+            this.openPrevFileToolStripMenuItem.Enabled = false;
+            this.openPrevFileToolStripMenuItem.Name = "openPrevFileToolStripMenuItem";
+            this.openPrevFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
+            this.openPrevFileToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.openPrevFileToolStripMenuItem.Text = "Load &previous file";
+            this.openPrevFileToolStripMenuItem.Click += new System.EventHandler(this.openPrevFileToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -412,6 +423,7 @@
         private System.Windows.Forms.ToolStripMenuItem externalEditorToolStripMenuItem;
         private System.IO.FileSystemWatcher fileSystemWatcherExternalEditor;
         private System.Windows.Forms.ToolStripMenuItem reverseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openPrevFileToolStripMenuItem;
     }
 }
 

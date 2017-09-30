@@ -78,18 +78,23 @@ namespace FidgetSpinnerEditor
                     p = RotatePoint(p, _center, r + LedAngleBetweenColumns);
                     r = 0;
 
-                    e.Graphics.FillEllipse(GetBit(i + j * LedRows) ? _colorEnabled : _colorDisabled,
+                    e.Graphics.FillEllipse(GetBit(i + j * LedRows, _bits) ? _colorEnabled : _colorDisabled,
                         p.X - _ledSize / 2, p.Y - _ledSize / 2, _ledSize, _ledSize);
                 }
             }
         }
 
-        private void LoadBin(string path)
+        private void LoadBinToEditor(string path)
         {
             _lastFile = path;
-            _bits = new BitArray(File.ReadAllBytes(path).SelectMany(GetBits).ToArray());
+            _bits = LoadBin(path);
             pictureBoxEditor.Invalidate();
             UpdateGui();
+        }
+
+        private BitArray LoadBin(string path)
+        {
+            return new BitArray(File.ReadAllBytes(path).SelectMany(GetBits).ToArray());
         }
 
         private void UpdateGui()
@@ -110,10 +115,10 @@ namespace FidgetSpinnerEditor
             }
         }
 
-        private bool GetBit(int bit)
+        private bool GetBit(int bit, BitArray b)
         {
-            if (_bits != null && _bits.Length > bit)
-                return _bits[bit];
+            if (b != null && b.Length > bit)
+                return b[bit];
             return false;
         }
 
@@ -145,7 +150,7 @@ namespace FidgetSpinnerEditor
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogBin.ShowDialog() == DialogResult.OK)
-                LoadBin(openFileDialogBin.FileName);
+                LoadBinToEditor(openFileDialogBin.FileName);
         }
 
         private void pictureBoxEditor_MouseMove(object sender, MouseEventArgs e)
@@ -297,11 +302,11 @@ namespace FidgetSpinnerEditor
                 }
                 else if (loadNext)
                 {
-                    LoadBin(f);
+                    LoadBinToEditor(f);
                     return;
                 }
 
-            LoadBin(files[backwards?files.Length-1:0]);
+            LoadBinToEditor(files[backwards?files.Length-1:0]);
         }
 
         private void externalEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -314,7 +319,7 @@ namespace FidgetSpinnerEditor
 
             var filename = Path.GetFileNameWithoutExtension(tmp) + ".bmp";
             var f = Path.Combine(tmp, filename);
-            ExportImage(f, true);
+            ExportImage(f, _bits, true);
 
             if (IsRunningOnMono())
                 Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = f });
@@ -345,33 +350,40 @@ namespace FidgetSpinnerEditor
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogImport.ShowDialog() == DialogResult.OK)
-                ImportImage(openFileDialogImport.FileName);
+                ImportImageToEditor(openFileDialogImport.FileName);
         }
 
-        private void ImportImage(string filename)
+        private void ImportImageToEditor(string filename)
         {
             try
             {
-                using (var fs = new FileStream(filename, FileMode.Open))
-                {
-                    var b = new Bitmap(fs);
-
-                    for (var x = 0; x < Math.Min(b.Width, LedColumns); x++)
-                    for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
-                    {
-                        var p = b.GetPixel(x, y);
-                        _bits[y + x * LedRows] = (p.R + p.G + p.B) / 3 < 100;
-                    }
-
-                    b.Dispose();
-                    pictureBoxEditor.Invalidate();
-                }
+                _bits = ImportImage(filename);
+                pictureBoxEditor.Invalidate();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error while importing: " + ex.Message, "Error", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private BitArray ImportImage(string filename)
+        {
+            var o = new BitArray(_bits.Length);
+            using (var fs = new FileStream(filename, FileMode.Open))
+            {
+                var b = new Bitmap(fs);
+
+                for (var x = 0; x < Math.Min(b.Width, LedColumns); x++)
+                    for (var y = 0; y < Math.Min(b.Height, LedRows); y++)
+                    {
+                        var p = b.GetPixel(x, y);
+                        o[y + x * LedRows] = (p.R + p.G + p.B) / 3 < 100;
+                    }
+
+                b.Dispose();
+            }
+            return o;
         }
 
         private void fileSystemWatcherExternalEditor_Changed(object sender, FileSystemEventArgs e)
@@ -384,11 +396,9 @@ namespace FidgetSpinnerEditor
         {
             var tmp = new bool[_bits.Count];
 
-            var i = 0;// LedColumns*LedRows;
-                      /*for (var x = 0; x < LedColumns; x++)
-                          for (var y = 0; y < LedRows; y++)*/
+            var i = 0;
+
             for (var x = LedColumns-1; x>=0; x--)
-                //  for (var y = LedRows-1; y >=0; y--)
                 for (var y = 0; y < LedRows; y++)
                     tmp[i++] = _bits[x * LedRows + y];
 
@@ -407,19 +417,70 @@ namespace FidgetSpinnerEditor
             LoadColors();
         }
 
+        private void toImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialogConversion.ShowDialog() == DialogResult.OK)
+                try
+                {
+                    var n = 0;
+                    foreach (var f in Directory.GetFiles(folderBrowserDialogConversion.SelectedPath, "*.bin"))
+                    {
+                        ExportImage(Path.ChangeExtension(f, ".bmp"), LoadBin(f), true);
+                        n++;
+                    }
+
+                    MessageBox.Show("Bin files converted: " + n, "Success", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while processing the bin files: " + ex.Message, "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+        }
+
+        private void imagesToBinariesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialogConversion.ShowDialog() == DialogResult.OK)
+                try
+                {
+                    var n = 0;
+                    foreach (var f in Directory.GetFiles(folderBrowserDialogConversion.SelectedPath))
+                        switch (Path.GetExtension(f).ToLower())
+                        {
+                            case ".jpg":
+                            case ".bmp":
+                            case ".png":
+                            case ".gif":
+                            case ".jpeg":
+                                File.WriteAllBytes(Path.ChangeExtension(f, ".bin"), BitArrayToByteArray(ImportImage(f)));
+                                n++;
+                                break;
+                        }
+
+                    MessageBox.Show("Images converted: " + n, "Success", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while processing the images: " + ex.Message, "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+        }
+
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (saveFileDialogExport.ShowDialog() == DialogResult.OK)
-                ExportImage(saveFileDialogExport.FileName);
+                ExportImage(saveFileDialogExport.FileName, _bits);
         }
 
-        private void ExportImage(string filename, bool silent = false)
+        private void ExportImage(string filename, BitArray input, bool silent = false)
         {
             var b = new Bitmap(LedColumns, LedRows);
 
             for (var x = 0; x < LedColumns; x++)
             for (var y = 0; y < LedRows; y++)
-                b.SetPixel(x, y, GetBit(x * LedRows + y) ? Color.Black : Color.White);
+                b.SetPixel(x, y, GetBit(x * LedRows + y, input) ? Color.Black : Color.White);
 
             try
             {
